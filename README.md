@@ -40,6 +40,9 @@
 - **[Shadcn/ui](https://ui.shadcn.com/)** - Componentes modernos y accesibles
 
 ### **Dependencias Clave**
+- **[React Hook Form](https://react-hook-form.com/)** - Manejo eficiente de formularios
+- **[Zod](https://zod.dev/)** - Validación de esquemas TypeScript-first
+- **[Next Themes](https://github.com/pacocoursey/next-themes)** - Modo claro/oscuro
 - **[Lucide React](https://lucide.dev/)** - Iconos modernos y consistentes
 - **[Google Fonts](https://fonts.google.com/)** - Tipografía premium (Poppins, Montserrat, Inter)
 
@@ -83,17 +86,35 @@ Abre [http://localhost:3000](http://localhost:3000) en tu navegador para ver el 
 ```
 royal-padel/
 ├── app/
-│   ├── layout.tsx          # Layout principal con fuentes
+│   ├── auth/                    # Rutas de autenticación
+│   │   ├── login/page.tsx       # Página de inicio de sesión
+│   │   ├── register/page.tsx    # Página de registro
+│   │   └── forgot-password/page.tsx # Página recuperar contraseña
+│   ├── layout.tsx          # Layout principal con fuentes y tema
 │   ├── page.tsx            # Página principal
 │   └── globals.css         # Estilos globales y tema
 ├── components/
+│   ├── auth/               # Componentes de autenticación
+│   │   ├── auth-layout.tsx      # Layout base para formularios
+│   │   ├── login-form.tsx       # Formulario de login
+│   │   ├── register-form.tsx    # Formulario de registro
+│   │   └── forgot-password-form.tsx # Formulario recuperar contraseña
 │   ├── layout/
 │   │   └── navbar.tsx      # Navegación principal
+│   ├── providers/
+│   │   └── theme-provider.tsx   # Provider para modo claro/oscuro
 │   ├── sections/
-│   │   ├── hero-section.tsx       # Hero principal
-│   │   └── connect-section.tsx    # Sección tipográfica
+│   │   ├── hero-section.tsx     # Hero principal
+│   │   └── connect-section.tsx  # Sección tipográfica
 │   └── ui/                 # Componentes Shadcn/ui
+│       ├── button.tsx
+│       ├── input.tsx
+│       ├── form.tsx
+│       ├── theme-toggle.tsx
+│       └── ... (otros componentes UI)
 └── lib/
+    ├── validations/
+    │   └── auth.ts         # Esquemas de validación Zod
     └── utils.ts            # Utilidades y helpers
 ```
 
@@ -106,16 +127,22 @@ royal-padel/
 - [x] Navegación responsive con menú móvil
 - [x] Sección de estadísticas con avatares
 - [x] Tipografía impactante estilo "Juega. Conecta. Domina."
+- [x] **Sistema de autenticación completo**
+  - [x] Formularios de Login, Registro y Recuperar contraseña
+  - [x] Validación robusta con Zod y React Hook Form
+  - [x] Rutas organizadas bajo `/auth/*`
+- [x] **Modo claro/oscuro** con next-themes
 - [x] Configuración de Google Fonts premium
 - [x] Componentes Shadcn/ui integrados
 - [x] Diseño mobile-first completamente responsive
 
 ### 🚧 **En Desarrollo**
+- [ ] Integración con API de autenticación (backend)
 - [ ] Sistema de reservas de canchas
-- [ ] Perfil de usuarios y autenticación
+- [ ] Perfil de usuarios y dashboard
 - [ ] Búsqueda de compañeros de juego
-- [ ] Integración con backend de Node.js
 - [ ] Sistema de pagos
+- [ ] Notificaciones en tiempo real
 
 ---
 
@@ -147,11 +174,12 @@ royal-padel/
 
 ## 🚀 Próximos Pasos
 
-1. **Integración Backend** - Conectar con API de Node.js
-2. **Sistema de Reservas** - Calendario y disponibilidad
-3. **Perfiles de Usuario** - Registro y autenticación
-4. **Búsqueda Avanzada** - Filtros por ubicación y nivel
-5. **Notificaciones** - Sistema de alerts y confirmaciones
+1. **Integración con API Backend** - Conectar formularios con endpoints de Node.js
+2. **Sistema de Reservas** - Calendario interactivo y gestión de disponibilidad
+3. **Dashboard de Usuario** - Panel de control con reservas y perfil
+4. **Búsqueda Avanzada** - Filtros por ubicación, nivel y disponibilidad
+5. **Sistema de Pagos** - Integración con Stripe o similar
+6. **Notificaciones Push** - Confirmaciones y recordatorios
 
 ---
 
