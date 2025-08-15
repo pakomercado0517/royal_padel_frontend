@@ -15,7 +15,7 @@ export const loginSchema = z.object({
 // Esquema para Registro
 export const registerSchema = z
   .object({
-    name: z
+    fullName: z
       .string()
       .min(1, { message: "El nombre es requerido" })
       .min(2, { message: "El nombre debe tener al menos 2 caracteres" }),
@@ -23,21 +23,21 @@ export const registerSchema = z
       .string()
       .min(1, { message: "El email es requerido" })
       .email({ message: "Email inválido" }),
+    phone: z
+      .string()
+      .min(1, { message: "El número telefonico es obligatorio" }),
     password: z
       .string()
       .min(1, { message: "La contraseña es requerida" })
       .min(6, { message: "La contraseña debe tener al menos 6 caracteres" })
       .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, {
-        message: "La contraseña debe tener al menos una mayúscula, una minúscula y un número",
+        message:
+          "La contraseña debe tener al menos una mayúscula, una minúscula y un número",
       }),
-    confirmPassword: z
-      .string()
-      .min(1, { message: "Confirma tu contraseña" }),
-    terms: z
-      .boolean()
-      .refine((val) => val === true, {
-        message: "Debes aceptar los términos y condiciones",
-      }),
+    confirmPassword: z.string().min(1, { message: "Confirma tu contraseña" }),
+    terms: z.boolean().refine((val) => val === true, {
+      message: "Debes aceptar los términos y condiciones",
+    }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Las contraseñas no coinciden",
@@ -60,11 +60,10 @@ export const resetPasswordSchema = z
       .min(1, { message: "La contraseña es requerida" })
       .min(6, { message: "La contraseña debe tener al menos 6 caracteres" })
       .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, {
-        message: "La contraseña debe tener al menos una mayúscula, una minúscula y un número",
+        message:
+          "La contraseña debe tener al menos una mayúscula, una minúscula y un número",
       }),
-    confirmPassword: z
-      .string()
-      .min(1, { message: "Confirma tu contraseña" }),
+    confirmPassword: z.string().min(1, { message: "Confirma tu contraseña" }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Las contraseñas no coinciden",

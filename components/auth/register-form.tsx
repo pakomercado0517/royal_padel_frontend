@@ -1,230 +1,197 @@
 "use client";
 
-import { useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import Link from "next/link";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Loader2, Mail, User, Check } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
-import { registerSchema, type RegisterForm } from "@/lib/validations/auth";
+import { register } from "@/actions/auth/create-account-action";
 
 export function RegisterForm() {
-  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const form = useForm<RegisterForm>({
-    resolver: zodResolver(registerSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-      terms: false,
-    },
+  const [state, dispatch, isPending] = useActionState(register, {
+    errors: [],
+    success: "",
   });
 
-  async function onSubmit(data: RegisterForm) {
-    setIsLoading(true);
-    
-    try {
-      // TODO: Integrar con API de autenticación
-      console.log("Register data:", data);
-      
-      // Simulamos una llamada a la API
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      
-      // Aquí iría la lógica de registro real
-    } catch (error) {
-      console.error("Error al registrarse:", error);
-    } finally {
-      setIsLoading(false);
+  useEffect(() => {
+    if (state.success) {
+      toast.success(state.success);
     }
-  }
+
+    if (state.errors && state.errors.length > 0) {
+      state.errors.forEach((error) => toast.error(error));
+    }
+  }, [state]);
 
   return (
     <div className="space-y-6">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          {/* Name Field */}
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-sm font-medium">Nombre completo</FormLabel>
-                <FormControl>
-                  <div className="relative">
-                    <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      type="text"
-                      placeholder="Tu nombre completo"
-                      className="pl-10 h-12 bg-background"
-                      disabled={isLoading}
-                      {...field}
-                    />
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+      <form action={dispatch} className="space-y-4">
+        {/* Name Field */}
+        <div className="space-y-2">
+          <Label htmlFor="fullName" className="text-sm font-medium">
+            Nombre completo
+          </Label>
+          <div className="relative">
+            <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <Input
+              id="fullName"
+              type="text"
+              name="fullName"
+              placeholder="Tu nombre completo"
+              className="pl-10 h-12 bg-background"
+              disabled={isPending}
+              required
+            />
+          </div>
+        </div>
 
-          {/* Email Field */}
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-sm font-medium">Email</FormLabel>
-                <FormControl>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      type="email"
-                      placeholder="tu@email.com"
-                      className="pl-10 h-12 bg-background"
-                      disabled={isLoading}
-                      {...field}
-                    />
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        {/* Email Field */}
+        <div className="space-y-2">
+          <Label htmlFor="email" className="text-sm font-medium">
+            Email
+          </Label>
+          <div className="relative">
+            <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <Input
+              id="email"
+              type="email"
+              name="email"
+              placeholder="tu@email.com"
+              className="pl-10 h-12 bg-background"
+              disabled={isPending}
+              required
+            />
+          </div>
+        </div>
 
-          {/* Password Field */}
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-sm font-medium">Contraseña</FormLabel>
-                <FormControl>
-                  <div className="relative">
-                    <Input
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Mínimo 6 caracteres"
-                      className="pr-10 h-12 bg-background"
-                      disabled={isLoading}
-                      {...field}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-3 h-4 w-4 text-muted-foreground hover:text-foreground"
-                      disabled={isLoading}
-                    >
-                      {showPassword ? <EyeOff /> : <Eye />}
-                    </button>
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        {/* Phone Field */}
+        <div className="space-y-2">
+          <Label htmlFor="email" className="text-sm font-medium">
+            Teléfono
+          </Label>
+          <div className="relative">
+            <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <Input
+              id="phone"
+              type="number"
+              name="phone"
+              placeholder="tu número de teléfono"
+              className="pl-10 h-12 bg-background"
+              disabled={isPending}
+              required
+            />
+          </div>
+        </div>
 
-          {/* Confirm Password Field */}
-          <FormField
-            control={form.control}
-            name="confirmPassword"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-sm font-medium">Confirmar contraseña</FormLabel>
-                <FormControl>
-                  <div className="relative">
-                    <Input
-                      type={showConfirmPassword ? "text" : "password"}
-                      placeholder="Repite tu contraseña"
-                      className="pr-10 h-12 bg-background"
-                      disabled={isLoading}
-                      {...field}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-3 top-3 h-4 w-4 text-muted-foreground hover:text-foreground"
-                      disabled={isLoading}
-                    >
-                      {showConfirmPassword ? <EyeOff /> : <Eye />}
-                    </button>
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        {/* Password Field */}
+        <div className="space-y-2">
+          <Label htmlFor="password" className="text-sm font-medium">
+            Contraseña
+          </Label>
+          <div className="relative">
+            <Input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="Mínimo 6 caracteres"
+              className="pr-10 h-12 bg-background"
+              disabled={isPending}
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-3 h-4 w-4 text-muted-foreground hover:text-foreground"
+              disabled={isPending}
+            >
+              {showPassword ? <EyeOff /> : <Eye />}
+            </button>
+          </div>
+        </div>
 
-          {/* Terms and Conditions */}
-          <FormField
-            control={form.control}
+        {/* Confirm Password Field */}
+        <div className="space-y-2">
+          <Label htmlFor="confirmPassword" className="text-sm font-medium">
+            Confirmar contraseña
+          </Label>
+          <div className="relative">
+            <Input
+              id="confirmPassword"
+              type={showConfirmPassword ? "text" : "password"}
+              name="confirmPassword"
+              placeholder="Repite tu contraseña"
+              className="pr-10 h-12 bg-background"
+              disabled={isPending}
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              className="absolute right-3 top-3 h-4 w-4 text-muted-foreground hover:text-foreground"
+              disabled={isPending}
+            >
+              {showConfirmPassword ? <EyeOff /> : <Eye />}
+            </button>
+          </div>
+        </div>
+
+        {/* Terms and Conditions */}
+        <div className="flex items-start space-x-3">
+          <input
+            id="terms"
+            type="checkbox"
             name="terms"
-            render={({ field }) => (
-              <FormItem>
-                <div className="flex items-start space-x-3">
-                  <div className="relative">
-                    <input
-                      type="checkbox"
-                      className="sr-only"
-                      disabled={isLoading}
-                      checked={field.value}
-                      onChange={field.onChange}
-                    />
-                    <div 
-                      onClick={() => !isLoading && field.onChange(!field.value)}
-                      className={`w-5 h-5 border-2 rounded cursor-pointer transition-all duration-200 ${
-                        field.value 
-                          ? 'bg-lime-500 border-lime-500' 
-                          : 'border-muted-foreground hover:border-lime-500'
-                      } ${isLoading ? 'cursor-not-allowed opacity-50' : ''}`}
-                    >
-                      {field.value && (
-                        <Check className="w-3 h-3 text-black m-auto" />
-                      )}
-                    </div>
-                  </div>
-                  <div className="text-sm leading-5">
-                    <span className="text-muted-foreground">
-                      Acepto los{" "}
-                      <Link href="/terms" className="text-lime-600 hover:text-lime-500 font-medium">
-                        términos y condiciones
-                      </Link>
-                      {" "}y la{" "}
-                      <Link href="/privacy" className="text-lime-600 hover:text-lime-500 font-medium">
-                        política de privacidad
-                      </Link>
-                    </span>
-                  </div>
-                </div>
-                <FormMessage />
-              </FormItem>
-            )}
+            className="mt-1 h-4 w-4 rounded border-gray-300 text-lime-600 focus:ring-lime-500"
+            disabled={isPending}
+            required
           />
+          <div className="text-sm leading-5">
+            <Label
+              htmlFor="terms"
+              className="text-muted-foreground cursor-pointer"
+            >
+              Acepto los{" "}
+              <Link
+                href="/terms"
+                className="text-lime-600 hover:text-lime-500 font-medium"
+              >
+                términos y condiciones
+              </Link>{" "}
+              y la{" "}
+              <Link
+                href="/privacy"
+                className="text-lime-600 hover:text-lime-500 font-medium"
+              >
+                política de privacidad
+              </Link>
+            </Label>
+          </div>
+        </div>
 
-          {/* Submit Button */}
-          <Button
-            type="submit"
-            className="w-full h-12 bg-lime-500 hover:bg-lime-600 text-black font-semibold text-base"
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Creando cuenta...
-              </>
-            ) : (
-              "Crear Cuenta"
-            )}
-          </Button>
-        </form>
-      </Form>
+        {/* Submit Button */}
+        <Button
+          type="submit"
+          className="w-full h-12 bg-lime-500 hover:bg-lime-600 text-black font-semibold text-base"
+          disabled={isPending}
+        >
+          {isPending ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Creando cuenta...
+            </>
+          ) : (
+            "Crear Cuenta"
+          )}
+        </Button>
+      </form>
 
       {/* Divider */}
       <div className="relative">
@@ -244,7 +211,7 @@ export function RegisterForm() {
           type="button"
           variant="outline"
           className="w-full h-12 font-medium"
-          disabled={isLoading}
+          disabled={isPending}
         >
           <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
             <path
@@ -271,7 +238,10 @@ export function RegisterForm() {
       {/* Login Link */}
       <div className="text-center text-sm">
         <span className="text-muted-foreground">¿Ya tienes una cuenta? </span>
-        <Link href="/auth/login" className="text-lime-600 hover:text-lime-500 font-semibold">
+        <Link
+          href="/auth/login"
+          className="text-lime-600 hover:text-lime-500 font-semibold"
+        >
           Inicia sesión aquí
         </Link>
       </div>
