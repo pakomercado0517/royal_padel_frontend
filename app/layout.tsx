@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Poppins, Montserrat } from "next/font/google";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 import "./globals.css";
+import { Toaster } from "sonner";
 
 // Fuente principal - moderna y legible
 const inter = Inter({
@@ -27,7 +29,8 @@ const montserrat = Montserrat({
 
 export const metadata: Metadata = {
   title: "Royal Padel - Reserva tu Cancha",
-  description: "Reserva tu cancha de padel de forma rápida y sencilla. Disfruta del mejor padel en instalaciones de primera calidad.",
+  description:
+    "Reserva tu cancha de padel de forma rápida y sencilla. Disfruta del mejor padel en instalaciones de primera calidad.",
 };
 
 export default function RootLayout({
@@ -36,11 +39,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${inter.variable} ${poppins.variable} ${montserrat.variable} font-inter antialiased`}
       >
-        {children}
+        <Toaster richColors position="top-right" />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

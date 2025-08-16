@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
@@ -36,12 +37,16 @@ export function Navbar() {
 
           {/* Desktop Auth Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10">
-              Iniciar Sesión
-            </Button>
-            <Button className="bg-lime-500 hover:bg-lime-600 text-black font-semibold rounded-full px-6">
-              Registrarse Gratis
-            </Button>
+            <Link href="/auth/login">
+              <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10">
+                Iniciar Sesión
+              </Button>
+            </Link>
+            <Link href="/auth/register">
+              <Button className="bg-lime-500 hover:bg-lime-600 text-black font-semibold rounded-full px-6">
+                Registrarse Gratis
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -70,12 +75,16 @@ export function Navbar() {
                 Comunidad
               </a>
               <div className="flex flex-col space-y-2 pt-4 border-t border-white/10">
-                <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10 justify-start">
-                  Iniciar Sesión
-                </Button>
-                <Button className="bg-lime-500 hover:bg-lime-600 text-black font-semibold rounded-full">
-                  Registrarse Gratis
-                </Button>
+                <Link href="/auth/login">
+                  <Button variant="ghost" className="text-white hover:text-white hover:bg-white/10 justify-start w-full">
+                    Iniciar Sesión
+                  </Button>
+                </Link>
+                <Link href="/auth/register">
+                  <Button className="bg-lime-500 hover:bg-lime-600 text-black font-semibold rounded-full">
+                    Registrarse Gratis
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>
