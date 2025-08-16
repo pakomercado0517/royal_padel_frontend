@@ -12,6 +12,11 @@ export const loginSchema = z.object({
     .min(6, { message: "La contraseña debe tener al menos 6 caracteres" }),
 });
 
+//Esquema de token de validación de cuenta
+export const TokenSchema = z
+  .string({ message: "Token inválido" })
+  .length(6, { message: "Token inválido" });
+
 // Esquema para Registro
 export const registerSchema = z
   .object({
@@ -25,7 +30,11 @@ export const registerSchema = z
       .email({ message: "Email inválido" }),
     phone: z
       .string()
-      .min(1, { message: "El número telefonico es obligatorio" }),
+      .min(10, {
+        message:
+          "El número telefonico es obligatorio con un mínimo de 10 dígitos",
+      })
+      .max(10, { message: "El teléfono es de un máximo de 10 dígitos" }),
     password: z
       .string()
       .min(1, { message: "La contraseña es requerida" })
@@ -75,3 +84,4 @@ export type LoginForm = z.infer<typeof loginSchema>;
 export type RegisterForm = z.infer<typeof registerSchema>;
 export type ForgotPasswordForm = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordForm = z.infer<typeof resetPasswordSchema>;
+export type Token = z.infer<typeof TokenSchema>;

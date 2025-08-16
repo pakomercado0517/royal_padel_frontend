@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useState } from "react";
 import Link from "next/link";
-import { Eye, EyeOff, Loader2, Mail, User, Check } from "lucide-react";
+import { Eye, EyeOff, Loader2, Mail, Phone, User } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -78,12 +78,12 @@ export function RegisterForm() {
             Teléfono
           </Label>
           <div className="relative">
-            <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
               id="phone"
-              type="number"
+              type="text"
               name="phone"
-              placeholder="tu número de teléfono"
+              placeholder="Tu número de teléfono"
               className="pl-10 h-12 bg-background"
               disabled={isPending}
               required

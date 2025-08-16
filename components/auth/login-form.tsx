@@ -1,133 +1,107 @@
 "use client";
 
-import { useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import Link from "next/link";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Loader2, Mail } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
-import { loginSchema, type LoginForm } from "@/lib/validations/auth";
+import { loginUser } from "@/actions/auth/login-acrions";
 
 export function LoginForm() {
-  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const form = useForm<LoginForm>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
+  const [state, dispatch, isPending] = useActionState(loginUser, {
+    errors: [],
+    success: "",
   });
 
-  async function onSubmit(data: LoginForm) {
-    setIsLoading(true);
-    
-    try {
-      // TODO: Integrar con API de autenticación
-      console.log("Login data:", data);
-      
-      // Simulamos una llamada a la API
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      
-      // Aquí iría la lógica de autenticación real
-    } catch (error) {
-      console.error("Error al iniciar sesión:", error);
-    } finally {
-      setIsLoading(false);
+  useEffect(() => {
+    if (state.success) {
+      toast.success(state.success);
     }
-  }
+
+    if (state.errors && state.errors.length > 0) {
+      state.errors.forEach((error) => toast.error(error));
+    }
+  }, [state]);
 
   return (
     <div className="space-y-6">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          {/* Email Field */}
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-sm font-medium">Email</FormLabel>
-                <FormControl>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      type="email"
-                      placeholder="tu@email.com"
-                      className="pl-10 h-12 bg-background"
-                      disabled={isLoading}
-                      {...field}
-                    />
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+      <form action={dispatch} className="space-y-4">
+        {/* Email Field */}
+        <div className="space-y-2">
+          <Label htmlFor="email" className="text-sm font-medium">
+            Email
+          </Label>
+          <div className="relative">
+            <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <Input
+              id="email"
+              type="email"
+              name="email"
+              placeholder="tu@email.com"
+              className="pl-10 h-12 bg-background"
+              disabled={isPending}
+              required
+            />
+          </div>
+        </div>
 
-          {/* Password Field */}
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <div className="flex justify-between items-center">
-                  <FormLabel className="text-sm font-medium">Contraseña</FormLabel>
-                  <Link 
-                    href="/auth/forgot-password" 
-                    className="text-sm text-lime-600 hover:text-lime-500 font-medium"
-                  >
-                    ¿Olvidaste tu contraseña?
-                  </Link>
-                </div>
-                <FormControl>
-                  <div className="relative">
-                    <Input
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Tu contraseña"
-                      className="pr-10 h-12 bg-background"
-                      disabled={isLoading}
-                      {...field}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-3 h-4 w-4 text-muted-foreground hover:text-foreground"
-                      disabled={isLoading}
-                    >
-                      {showPassword ? <EyeOff /> : <Eye />}
-                    </button>
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        {/* Password Field */}
+        <div className="space-y-2">
+          <div className="flex justify-between items-center">
+            <Label htmlFor="password" className="text-sm font-medium">
+              Contraseña
+            </Label>
+            <Link 
+              href="/auth/forgot-password" 
+              className="text-sm text-lime-600 hover:text-lime-500 font-medium"
+            >
+              ¿Olvidaste tu contraseña?
+            </Link>
+          </div>
+          <div className="relative">
+            <Input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="Tu contraseña"
+              className="pr-10 h-12 bg-background"
+              disabled={isPending}
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-3 h-4 w-4 text-muted-foreground hover:text-foreground"
+              disabled={isPending}
+            >
+              {showPassword ? <EyeOff /> : <Eye />}
+            </button>
+          </div>
+        </div>
 
-          {/* Submit Button */}
-          <Button
-            type="submit"
-            className="w-full h-12 bg-lime-500 hover:bg-lime-600 text-black font-semibold text-base"
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Iniciando sesión...
-              </>
-            ) : (
-              "Iniciar Sesión"
-            )}
-          </Button>
-        </form>
-      </Form>
+        {/* Submit Button */}
+        <Button
+          type="submit"
+          className="w-full h-12 bg-lime-500 hover:bg-lime-600 text-black font-semibold text-base"
+          disabled={isPending}
+        >
+          {isPending ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Iniciando sesión...
+            </>
+          ) : (
+            "Iniciar Sesión"
+          )}
+        </Button>
+      </form>
 
       {/* Divider */}
       <div className="relative">
@@ -147,7 +121,7 @@ export function LoginForm() {
           type="button"
           variant="outline"
           className="w-full h-12 font-medium"
-          disabled={isLoading}
+          disabled={isPending}
         >
           <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
             <path
