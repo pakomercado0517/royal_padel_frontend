@@ -3,18 +3,18 @@
 import { useActionState, useEffect, useState } from "react";
 import Link from "next/link";
 import { Eye, EyeOff, Loader2, Mail } from "lucide-react";
-
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
 
-import { loginUser } from "@/actions/auth/login-acrions";
+import { loginUser } from "@/actions/auth/login-actions";
 
 export function LoginForm() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-
   const [state, dispatch, isPending] = useActionState(loginUser, {
     errors: [],
     success: "",
@@ -23,6 +23,7 @@ export function LoginForm() {
   useEffect(() => {
     if (state.success) {
       toast.success(state.success);
+      router.push("/dashboard");
     }
 
     if (state.errors && state.errors.length > 0) {
@@ -58,8 +59,8 @@ export function LoginForm() {
             <Label htmlFor="password" className="text-sm font-medium">
               Contraseña
             </Label>
-            <Link 
-              href="/auth/forgot-password" 
+            <Link
+              href="/auth/forgot-password"
               className="text-sm text-lime-600 hover:text-lime-500 font-medium"
             >
               ¿Olvidaste tu contraseña?
@@ -148,7 +149,10 @@ export function LoginForm() {
       {/* Sign Up Link */}
       <div className="text-center text-sm">
         <span className="text-muted-foreground">¿No tienes una cuenta? </span>
-        <Link href="/auth/register" className="text-lime-600 hover:text-lime-500 font-semibold">
+        <Link
+          href="/auth/register"
+          className="text-lime-600 hover:text-lime-500 font-semibold"
+        >
           Regístrate aquí
         </Link>
       </div>

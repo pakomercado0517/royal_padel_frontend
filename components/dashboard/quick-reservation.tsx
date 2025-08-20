@@ -6,11 +6,64 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export function QuickReservation() {
+  /* 
+  ====================================
+  🔗 API CALLS NEEDED FOR THIS COMPONENT:
+  ====================================
+  
+  1. 🏟️ GET AVAILABLE COURTS:
+     - Endpoint: GET /api/court?status=active
+     - Headers: Authorization: Bearer {token}
+     - Response: {
+         courts: [{
+           id, name, basePricePerHour, features, status,
+           capacity, description, images
+         }]
+       }
+  
+  2. ⏰ GET AVAILABLE TIME SLOTS:
+     - Endpoint: GET /api/reservation/availability/{courtId}?date={selectedDate}
+     - This should return available time slots for selected court and date
+     - Response: {
+         available: boolean,
+         timeSlots: ["08:00", "09:30", "11:00", ...]
+       }
+  
+  3. 💰 CALCULATE PRICE FOR RESERVATION:
+     - Endpoint: POST /api/court-pricing/calculate
+     - Body: { courtId, date, startTime, endTime }
+     - Response: {
+         success: true,
+         data: {
+           totalPrice: 171.00,
+           pricePerHour: 85.50,
+           duration: 2.0,
+           breakdown: [{ timeSlot, pricePerHour, subtotal }]
+         }
+       }
+  
+  4. 📅 CREATE RESERVATION:
+     - Endpoint: POST /api/reservation
+     - Body: {
+         courtId, reservationDate, startTime, endTime,
+         totalPrice, bookingType: "individual"
+       }
+     - Response: { message, reservation: {...} }
+  
+  💡 IMPLEMENTATION NOTES:
+  - Load courts list on component mount
+  - Update available times when court or date changes
+  - Calculate price when court, date, and time are selected
+  - Show price breakdown in UI before confirming reservation
+  - Handle loading states for each API call
+  - Validate time slots before allowing selection
+  */
+  
   const [selectedDate, setSelectedDate] = useState<string>("today");
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [selectedCourt, setSelectedCourt] = useState<string>("");
 
-  // Mock data - TODO: Obtener desde API
+  // Mock data - TODO: Replace with API calls above
   const availableTimes = [
     "08:00", "09:30", "11:00", "12:30", "14:00", "15:30", "17:00", "18:30", "20:00"
   ];

@@ -1,21 +1,47 @@
 "use client";
 
 import { Calendar, Trophy, Clock } from "lucide-react";
+import { User as AuthUser } from "@/lib/validations/auth";
 
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  totalGames: number;
-  monthlyGames: number;
-  favoriteCourtId: string;
-}
+export function WelcomeSection({ user }: { user?: AuthUser }) {
+  /* 
+  ====================================
+  🔗 API CALLS NEEDED FOR THIS COMPONENT:
+  ====================================
+  
+  1. 🎯 GET USER PROFILE WITH STATS:
+     - Endpoint: GET /api/user/profile
+     - Headers: Authorization: Bearer {token}
+     - Response: {
+         user: {
+           id, fullName, email, role, 
+           emailVerified, phoneVerified
+         }
+       }
+  
+  2. 📊 GET USER STATS (if not included in profile):
+     - This might need a separate endpoint like GET /api/user/stats
+     - Or could be included in the profile response
+     - Expected data: {
+         totalGamesPlayed: number,
+         totalHoursPlayed: number, 
+         currentMonthGames: number,
+         favoriteCourtId: string,
+         favoriteCourtName: string
+       }
+  
+  3. 🏟️ GET FAVORITE COURT NAME (if not included above):
+     - Endpoint: GET /api/court/{favoriteCourtId}
+     - Response: { id, name, ... }
+  
+  💡 IMPLEMENTATION NOTES:
+  - Call these APIs when component mounts or when user logs in
+  - Store user data in context/state for reuse across dashboard
+  - Calculate totalHoursPlayed = totalGamesPlayed * 1.5 (if not provided by API)
+  - Handle loading states during API calls
+  - Show fallback values if stats not available yet
+  */
 
-interface WelcomeSectionProps {
-  user: User;
-}
-
-export function WelcomeSection({ user }: WelcomeSectionProps) {
   // Determinar saludo basado en la hora
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -50,7 +76,7 @@ export function WelcomeSection({ user }: WelcomeSectionProps) {
         {/* Saludo principal */}
         <div className="mb-6">
           <h1 className="text-3xl md:text-4xl font-display font-bold mb-2">
-            {getGreeting()}, {user.name.split(' ')[0]}! 👋
+            {getGreeting()}, {user?.fullName.split(" ")[0]}! 👋
           </h1>
           <p className="text-lg md:text-xl opacity-90 font-medium">
             {getMotivationalMessage()}
@@ -64,8 +90,12 @@ export function WelcomeSection({ user }: WelcomeSectionProps) {
               <Trophy className="w-5 h-5" />
             </div>
             <div>
-              <div className="text-2xl font-bold">{user.totalGames}</div>
-              <div className="text-sm opacity-90 font-medium">Partidos jugados</div>
+              <div className="text-2xl font-bold">
+                {user?.stats.totalGamesPlayed}
+              </div>
+              <div className="text-sm opacity-90 font-medium">
+                Partidos jugados
+              </div>
             </div>
           </div>
 
@@ -74,7 +104,9 @@ export function WelcomeSection({ user }: WelcomeSectionProps) {
               <Calendar className="w-5 h-5" />
             </div>
             <div>
-              <div className="text-2xl font-bold">{user.monthlyGames}</div>
+              <div className="text-2xl font-bold">
+                {user?.stats.currentMonthGames}
+              </div>
               <div className="text-sm opacity-90 font-medium">Este mes</div>
             </div>
           </div>
@@ -84,7 +116,9 @@ export function WelcomeSection({ user }: WelcomeSectionProps) {
               <Clock className="w-5 h-5" />
             </div>
             <div>
-              <div className="text-2xl font-bold">{user.totalGames * 1.5}h</div>
+              <div className="text-2xl font-bold">
+                {(user?.stats.totalGamesPlayed ?? 0) * 1.5}h
+              </div>
               <div className="text-sm opacity-90 font-medium">Tiempo total</div>
             </div>
           </div>
@@ -93,7 +127,7 @@ export function WelcomeSection({ user }: WelcomeSectionProps) {
         {/* Mensaje adicional */}
         <div className="mt-6 flex items-center gap-2 text-sm opacity-90">
           <div className="w-2 h-2 bg-black rounded-full animate-pulse"></div>
-          <span>Tu cancha favorita es la #{user.favoriteCourtId}</span>
+          <span>Tu cancha favorita es la #{user?.stats.favoriteCourtId}</span>
         </div>
       </div>
     </div>

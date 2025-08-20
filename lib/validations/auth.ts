@@ -17,6 +17,34 @@ export const TokenSchema = z
   .string({ message: "Token inválido" })
   .length(6, { message: "Token inválido" });
 
+export const UserStatsSchema = z.object({
+  id: z.string(),
+  userId: z.string(),
+  totalGamesPlayed: z.number(),
+  totalHoursPlayed: z.string(),
+  currentMonthGames: z.number(),
+  favoriteCourtId: z.string(),
+  totalSpent: z.string(),
+  averageRating: z.number(),
+  lastGameDate: z.string(),
+  streakDays: z.number(),
+  achievements: z.array(z.string()),
+  preferencesData: z.array(z.string()),
+});
+
+//Esquema de datos de Usuario
+export const UserSchema = z.object({
+  id: z.string(),
+  fullName: z.string(),
+  email: z.string(),
+  role: z.string(),
+  status: z.string(),
+  emailVerified: z.boolean(),
+  phoneVerified: z.boolean(),
+  avatarUrl: z.string(),
+  stats: UserStatsSchema,
+});
+
 // Esquema para Registro
 export const registerSchema = z
   .object({
@@ -85,3 +113,5 @@ export type RegisterForm = z.infer<typeof registerSchema>;
 export type ForgotPasswordForm = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordForm = z.infer<typeof resetPasswordSchema>;
 export type Token = z.infer<typeof TokenSchema>;
+export type User = z.infer<typeof UserSchema>;
+export type UserStats = z.infer<typeof UserStatsSchema>;

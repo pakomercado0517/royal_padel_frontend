@@ -20,7 +20,53 @@ interface Court {
 export function AvailableCourts() {
   const [refreshing, setRefreshing] = useState(false);
   
-  // Mock data - TODO: Obtener desde API en tiempo real
+  /* 
+  ====================================
+  🔗 API CALLS NEEDED FOR THIS COMPONENT:
+  ====================================
+  
+  1. 🏠 GET ACTIVE COURTS:
+     - Endpoint: GET /api/court?status=active
+     - Headers: Authorization: Bearer {token}
+     - Response: [{
+         id, name, type, location, status,
+         amenities: [{ id, name, icon }],
+         images: [{ id, url, isPrimary }],
+         basePrice, description
+       }]
+  
+  2. 📅 GET REAL-TIME AVAILABILITY FOR TODAY:
+     - Endpoint: GET /api/reservation/availability/{courtId}?date={today}
+     - Call for each court to get current availability
+     - Response: {
+         availableSlots: [{ startTime, endTime, available: boolean }],
+         totalSlots, availableCount, occupiedCount
+       }
+  
+  3. 💰 GET CURRENT PRICING:
+     - Endpoint: POST /api/court-pricing/calculate
+     - Body: {
+         courtId: string,
+         date: today,
+         startTime: "current_hour",
+         endTime: "current_hour + 1",
+         durationMinutes: 60
+       }
+     - Response: { totalPrice, basePrice, seasonMultiplier, dayMultiplier }
+  
+  💡 IMPLEMENTATION NOTES:
+  - Load courts first, then fetch availability for each
+  - Show loading skeleton while fetching
+  - Calculate "slots disponibles" from availability data
+  - Update availability every 5-10 minutes (useInterval)
+  - Show court status: "Disponible", "Ocupada", "Mantenimiento"
+  - Handle courts with no availability gracefully
+  - Price shown should be "desde $X/hora" using base price
+  - Allow quick reservation by navigating to booking flow
+  - Sort courts by availability (most available first)
+  */
+  
+  // Mock data - TODO: Replace with API calls above
   const courts: Court[] = [
     {
       id: "1",

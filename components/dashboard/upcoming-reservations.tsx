@@ -22,7 +22,50 @@ interface Reservation {
 }
 
 export function UpcomingReservations() {
-  // Mock data - TODO: Obtener desde API
+  /* 
+  ====================================
+  🔗 API CALLS NEEDED FOR THIS COMPONENT:
+  ====================================
+  
+  1. 📅 GET USER'S UPCOMING RESERVATIONS:
+     - Endpoint: GET /api/reservation?dateFrom={today}&status=confirmed,pending
+     - Headers: Authorization: Bearer {token}
+     - Query params: 
+       * dateFrom: today's date (YYYY-MM-DD)
+       * status: "confirmed,pending" (comma separated)
+       * pageSize: 3 (limit to first 3 upcoming)
+     - Response: {
+         reservations: [{
+           id, reservationDate, startTime, endTime,
+           durationMinutes, totalPrice, status, specialRequests,
+           court: { id, name },
+           user: { id, fullName },
+           payment: { id, amount, status }
+         }],
+         pagination: { total, page, pageSize, ... }
+       }
+  
+  2. ❌ CANCEL RESERVATION:
+     - Endpoint: POST /api/reservation/{id}/cancel
+     - Body: { cancellationReason: string }
+     - Response: { message }
+  
+  3. 🔍 VIEW RESERVATION DETAILS:
+     - Endpoint: GET /api/reservation/{id}
+     - Response: { full reservation details with court and payment info }
+  
+  💡 IMPLEMENTATION NOTES:
+  - Load reservations on component mount
+  - Filter for reservations with future dates only
+  - Show loading state while fetching
+  - Handle empty state when no upcoming reservations
+  - Calculate missing players (4 - current players count)
+  - Format dates as "Hoy", "Mañana" or "Lun 15 Ene"
+  - Refresh data after cancellation
+  - Show confirmation modal before canceling
+  */
+  
+  // Mock data - TODO: Replace with API call above
   const reservations: Reservation[] = [
     {
       id: "1",
