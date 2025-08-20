@@ -90,7 +90,7 @@ export function DashboardNavbar({ user }: { user?: AuthUser }) {
     const result = await logout();
 
     if (result.success) {
-      toast.success(result.data?.message);
+      toast.warning(result.data?.message);
       redirect("/auth/login");
     } else {
       toast.error(result.error);
