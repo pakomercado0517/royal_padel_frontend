@@ -132,7 +132,14 @@ export const editProfileSchema = z.object({
     .or(z.literal("")),
 });
 
+export const avatarUrlSchema = z
+  .string()
+  .url({ message: "URL de avatar inválida" })
+  .optional()
+  .or(z.literal(""));
+
 // Esquema para Cambio de Contraseña
+
 export const changePasswordSchema = z
   .object({
     currentPassword: z
@@ -188,3 +195,4 @@ export type EditProfileForm = z.infer<typeof editProfileSchema>;
 export type ChangePasswordForm = z.infer<typeof changePasswordSchema>;
 export type NotificationSettings = z.infer<typeof notificationSettingsSchema>;
 export type PrivacySettings = z.infer<typeof privacySettingsSchema>;
+export type AvatarUrl = z.infer<typeof avatarUrlSchema>;

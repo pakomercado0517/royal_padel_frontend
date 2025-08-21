@@ -56,13 +56,15 @@ export const updateProfileAction = async (
 
   if (!req.ok) {
     const { error } = ErrorResponseSchema.parse(json);
-    
+
     // Si el error es por email no verificado, redirigir al login con mensaje
     if (error.includes("email") && error.includes("verif")) {
-      const encodedMessage = encodeURIComponent("Tu email ha sido actualizado. Verifica tu nuevo email para continuar.");
+      const encodedMessage = encodeURIComponent(
+        "Tu email ha sido actualizado. Verifica tu nuevo email para continuar."
+      );
       redirect(`/auth/login?message=${encodedMessage}&type=info`);
     }
-    
+
     return {
       errors: [error],
       success: "",
@@ -70,19 +72,21 @@ export const updateProfileAction = async (
   }
 
   const success = SuccessResponseSchema.parse(json.message);
-  
+
   // Si se cambió el email exitosamente, también puede requerir verificación
   const originalEmail = formData.get("originalEmail") as string;
   const newEmail = user.data.email;
-  
+
   if (originalEmail && originalEmail !== newEmail) {
     // Redirigir al login con mensaje de éxito
-    const encodedMessage = encodeURIComponent("Email actualizado correctamente. Verifica tu nuevo email para continuar.");
+    const encodedMessage = encodeURIComponent(
+      "Email actualizado correctamente. Verifica tu nuevo email para continuar."
+    );
     redirect(`/auth/login?message=${encodedMessage}&type=success`);
   }
-  
+
   revalidatePath("/profile");
-  
+
   return {
     errors: [],
     success,

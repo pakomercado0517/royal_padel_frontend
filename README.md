@@ -40,7 +40,6 @@
 - **[Shadcn/ui](https://ui.shadcn.com/)** - Componentes modernos y accesibles
 
 ### **Dependencias Clave**
-- **[React Hook Form](https://react-hook-form.com/)** - Manejo eficiente de formularios
 - **[Zod](https://zod.dev/)** - Validación de esquemas TypeScript-first
 - **[Next Themes](https://github.com/pacocoursey/next-themes)** - Modo claro/oscuro
 - **[Lucide React](https://lucide.dev/)** - Iconos modernos y consistentes
@@ -49,6 +48,7 @@
 - **[Input OTP](https://input-otp.rodz.dev/)** - Componente de entrada OTP accesible
 - **[Date-fns](https://date-fns.org/)** - Manipulación y formateo de fechas
 - **[Radix UI](https://www.radix-ui.com/)** - Primitivos de componentes accesibles
+- **[Supabase](https://supabase.com/)** - Backend-as-a-Service para almacenamiento de archivos
 
 ---
 
@@ -121,7 +121,8 @@ royal-padel/
 │   │   ├── reset-password-form.tsx
 │   │   ├── confirm-account-form.tsx
 │   │   ├── login-with-message.tsx # Login con mensajes toast
-│   │   └── otp-form.tsx         # Entrada de códigos OTP
+│   │   ├── otp-form.tsx         # Entrada de códigos OTP
+│   │   └── verify-token-form.tsx # Verificación de token y reset
 │   ├── dashboard/               # Componentes del dashboard
 │   │   ├── dashboard-navbar.tsx # Navegación del dashboard
 │   │   ├── welcome-section.tsx  # Sección de bienvenida
@@ -130,7 +131,7 @@ royal-padel/
 │   │   └── available-courts.tsx # Estado de canchas
 │   ├── profile/                 # Componentes de perfil
 │   │   ├── profile-info.tsx     # Información del perfil
-│   │   ├── profile-editor.tsx   # Editor de perfil
+│   │   ├── profile-editor.tsx   # Editor de perfil con upload de avatar
 │   │   └── account-settings.tsx # Configuración de cuenta
 │   ├── layout/
 │   │   └── navbar.tsx           # Navegación principal
@@ -147,11 +148,17 @@ royal-padel/
 │       ├── avatar.tsx           # Componente Avatar
 │       ├── card.tsx             # Componente Card
 │       ├── dialog.tsx           # Componente Dialog
+│       ├── badge.tsx            # Componente Badge
+│       ├── select.tsx           # Componente Select
+│       ├── dropdown-menu.tsx    # Componente Dropdown
 │       └── ... (otros componentes UI)
+├── hooks/
+│   └── useAvatarUpload.ts       # Hook para upload de avatares a Supabase
 └── lib/
     ├── validations/
     │   ├── auth.ts              # Esquemas de validación auth
     │   └── profile.ts           # Esquemas de validación perfil
+    ├── avatar-utils.ts          # Utilidades para avatares (initials, preview)
     └── utils.ts                 # Utilidades y helpers
 ```
 
@@ -185,8 +192,15 @@ royal-padel/
   - [x] Diseño minimalista y semi-elegante
 
 - [x] **Sistema de Perfil de Usuario**
-  - [x] Visualización de información personal
+  - [x] Visualización de información personal con estadísticas
   - [x] Editor de perfil (nombre, email, teléfono)
+  - [x] **Sistema de Avatar Completo**
+    - [x] Upload de imágenes a Supabase Storage
+    - [x] Preview inmediato de imágenes seleccionadas
+    - [x] Validación de tipos y tamaños de archivo
+    - [x] Gestión de estados de carga y errores
+    - [x] Control pendiente con rollback automático
+    - [x] Generación automática de iniciales como fallback
   - [x] Configuración de cuenta y cambio de contraseña
   - [x] Interfaz tabbed para organización
   - [x] Validaciones en tiempo real
@@ -198,7 +212,10 @@ royal-padel/
   - [x] Componentes Shadcn/ui completamente integrados
   - [x] Modo claro/oscuro con next-themes
   - [x] Google Fonts premium (Poppins, Montserrat, Inter)
+  - [x] **Patrón useActionState** - Formularios sin React Hook Form
   - [x] Arquitectura de Server Actions organizada
+  - [x] **Integración Supabase Storage** - Upload y gestión de archivos
+  - [x] Hooks personalizados reutilizables
   - [x] Diseño mobile-first completamente responsive
 
 ### 🚧 **En Desarrollo**
@@ -206,6 +223,7 @@ royal-padel/
   - [ ] API de autenticación real
   - [ ] Base de datos de usuarios
   - [ ] Sistema de sesiones seguro
+  - [ ] Endpoints para estadísticas de perfil
 
 - [ ] **Sistema de Reservas Avanzado**
   - [ ] Calendario interactivo
@@ -224,9 +242,9 @@ royal-padel/
 
 - [ ] **Características Avanzadas**
   - [ ] Notificaciones push
-  - [ ] Sistema de avatares personalizados
   - [ ] Análiticas de juego
   - [ ] Sistema de reseñas y calificaciones
+  - [ ] Búsqueda de usuarios y filtros avanzados
 
 ---
 
@@ -258,12 +276,12 @@ royal-padel/
 
 ## 🚀 Próximos Pasos
 
-1. **Integración con API Backend** - Conectar formularios con endpoints de Node.js
+1. **Conectar Datos Reales** - Integrar estadísticas y datos de backend
 2. **Sistema de Reservas** - Calendario interactivo y gestión de disponibilidad
-3. **Dashboard de Usuario** - Panel de control con reservas y perfil
-4. **Búsqueda Avanzada** - Filtros por ubicación, nivel y disponibilidad
-5. **Sistema de Pagos** - Integración con Stripe o similar
-6. **Notificaciones Push** - Confirmaciones y recordatorios
+3. **Búsqueda Avanzada** - Filtros por ubicación, nivel y disponibilidad
+4. **Sistema de Pagos** - Integración con Stripe o similar
+5. **Notificaciones Push** - Confirmaciones y recordatorios
+6. **Optimizaciones de Performance** - Lazy loading y caching
 
 ---
 

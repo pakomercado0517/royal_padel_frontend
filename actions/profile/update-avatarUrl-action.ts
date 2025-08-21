@@ -5,7 +5,7 @@ import {
   ErrorResponseSchema,
   SuccessResponseSchema,
 } from "@/lib/validations/actions-response";
-import { changePasswordSchema } from "@/lib/validations/auth";
+import { avatarUrlSchema } from "@/lib/validations/auth";
 import { revalidatePath } from "next/cache";
 
 type ActionStateTypes = {
@@ -13,27 +13,25 @@ type ActionStateTypes = {
   success: string;
 };
 
-export const changeCurrentPassword = async (
+export const updateAvatarUrl = async (
   prevState: ActionStateTypes,
   formData: FormData
 ) => {
-  const passwordData = {
-    currentPassword: formData.get("currentPassword"),
-    newPassword: formData.get("newPassword"),
-    confirmNewPassword: formData.get("confirmNewPassword"),
+  const avatarData = {
+    avatarUrl: formData.get("avatarUrl"),
   };
 
-  const newPasswordFormData = changePasswordSchema.safeParse(passwordData);
+  const avatar = avatarUrlSchema.safeParse(avatarData);
 
-  if (!newPasswordFormData.success) {
+  if (!avatar.success) {
     return {
-      errors: newPasswordFormData.error.issues.map((issue) => issue.message),
+      errors: avatar.error.issues.map((issue) => issue.message),
       success: "",
     };
   }
 
   const token = await getToken();
-  const url = `${process.env.API_URL}/user/update_password`;
+  const url = `${process.env.API_URL}/user/update_avatarURL`;
 
   const req = await fetch(url, {
     method: "PUT",
@@ -42,8 +40,7 @@ export const changeCurrentPassword = async (
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({
-      currentPassword: newPasswordFormData.data.currentPassword,
-      newPassword: newPasswordFormData.data.newPassword,
+      avatarUrl: avatar.data,
     }),
   });
 
