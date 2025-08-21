@@ -13,10 +13,10 @@ interface VerifyTokenPageProps {
   };
 }
 
-export default function VerifyTokenPage({
+export default async function VerifyTokenPage({
   searchParams,
 }: VerifyTokenPageProps) {
-  const email = searchParams.email;
+  const { email } = await searchParams;
 
   return (
     <AuthLayout

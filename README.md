@@ -40,11 +40,15 @@
 - **[Shadcn/ui](https://ui.shadcn.com/)** - Componentes modernos y accesibles
 
 ### **Dependencias Clave**
-- **[React Hook Form](https://react-hook-form.com/)** - Manejo eficiente de formularios
 - **[Zod](https://zod.dev/)** - Validación de esquemas TypeScript-first
 - **[Next Themes](https://github.com/pacocoursey/next-themes)** - Modo claro/oscuro
 - **[Lucide React](https://lucide.dev/)** - Iconos modernos y consistentes
 - **[Google Fonts](https://fonts.google.com/)** - Tipografía premium (Poppins, Montserrat, Inter)
+- **[Sonner](https://sonner.emilkowal.ski/)** - Sistema de notificaciones toast moderno
+- **[Input OTP](https://input-otp.rodz.dev/)** - Componente de entrada OTP accesible
+- **[Date-fns](https://date-fns.org/)** - Manipulación y formateo de fechas
+- **[Radix UI](https://www.radix-ui.com/)** - Primitivos de componentes accesibles
+- **[Supabase](https://supabase.com/)** - Backend-as-a-Service para almacenamiento de archivos
 
 ---
 
@@ -85,37 +89,77 @@ Abre [http://localhost:3000](http://localhost:3000) en tu navegador para ver el 
 
 ```
 royal-padel/
+├── actions/
+│   ├── auth/                    # Server Actions de autenticación
+│   │   ├── create-account-action.ts
+│   │   ├── login-actions.ts
+│   │   ├── forgot-password-action.ts
+│   │   ├── reset-password-action.ts
+│   │   ├── verify-token-action.ts
+│   │   └── user-data-actions.ts
+│   └── profile/                 # Server Actions de perfil
+│       ├── update-profile-actions.ts
+│       └── change-current-password-action.ts
 ├── app/
 │   ├── auth/                    # Rutas de autenticación
 │   │   ├── login/page.tsx       # Página de inicio de sesión
 │   │   ├── register/page.tsx    # Página de registro
-│   │   └── forgot-password/page.tsx # Página recuperar contraseña
-│   ├── layout.tsx          # Layout principal con fuentes y tema
-│   ├── page.tsx            # Página principal
-│   └── globals.css         # Estilos globales y tema
+│   │   ├── confirm-account/page.tsx # Confirmación de cuenta
+│   │   ├── forgot-password/page.tsx # Recuperar contraseña
+│   │   └── reset-password/page.tsx  # Restablecer contraseña
+│   ├── dashboard/page.tsx       # Panel principal del usuario
+│   ├── profile/page.tsx         # Perfil y configuración
+│   ├── layout.tsx               # Layout principal
+│   ├── page.tsx                 # Landing page
+│   └── globals.css              # Estilos globales
 ├── components/
-│   ├── auth/               # Componentes de autenticación
+│   ├── auth/                    # Componentes de autenticación
 │   │   ├── auth-layout.tsx      # Layout base para formularios
 │   │   ├── login-form.tsx       # Formulario de login
 │   │   ├── register-form.tsx    # Formulario de registro
-│   │   └── forgot-password-form.tsx # Formulario recuperar contraseña
+│   │   ├── forgot-password-form.tsx
+│   │   ├── reset-password-form.tsx
+│   │   ├── confirm-account-form.tsx
+│   │   ├── login-with-message.tsx # Login con mensajes toast
+│   │   ├── otp-form.tsx         # Entrada de códigos OTP
+│   │   └── verify-token-form.tsx # Verificación de token y reset
+│   ├── dashboard/               # Componentes del dashboard
+│   │   ├── dashboard-navbar.tsx # Navegación del dashboard
+│   │   ├── welcome-section.tsx  # Sección de bienvenida
+│   │   ├── quick-reservation.tsx # Reserva rápida
+│   │   ├── upcoming-reservations.tsx # Próximas reservas
+│   │   └── available-courts.tsx # Estado de canchas
+│   ├── profile/                 # Componentes de perfil
+│   │   ├── profile-info.tsx     # Información del perfil
+│   │   ├── profile-editor.tsx   # Editor de perfil con upload de avatar
+│   │   └── account-settings.tsx # Configuración de cuenta
 │   ├── layout/
-│   │   └── navbar.tsx      # Navegación principal
+│   │   └── navbar.tsx           # Navegación principal
 │   ├── providers/
-│   │   └── theme-provider.tsx   # Provider para modo claro/oscuro
+│   │   └── theme-provider.tsx   # Provider para temas
 │   ├── sections/
 │   │   ├── hero-section.tsx     # Hero principal
 │   │   └── connect-section.tsx  # Sección tipográfica
-│   └── ui/                 # Componentes Shadcn/ui
+│   └── ui/                      # Componentes Shadcn/ui
 │       ├── button.tsx
 │       ├── input.tsx
 │       ├── form.tsx
-│       ├── theme-toggle.tsx
+│       ├── input-otp.tsx        # Componente OTP
+│       ├── avatar.tsx           # Componente Avatar
+│       ├── card.tsx             # Componente Card
+│       ├── dialog.tsx           # Componente Dialog
+│       ├── badge.tsx            # Componente Badge
+│       ├── select.tsx           # Componente Select
+│       ├── dropdown-menu.tsx    # Componente Dropdown
 │       └── ... (otros componentes UI)
+├── hooks/
+│   └── useAvatarUpload.ts       # Hook para upload de avatares a Supabase
 └── lib/
     ├── validations/
-    │   └── auth.ts         # Esquemas de validación Zod
-    └── utils.ts            # Utilidades y helpers
+    │   ├── auth.ts              # Esquemas de validación auth
+    │   └── profile.ts           # Esquemas de validación perfil
+    ├── avatar-utils.ts          # Utilidades para avatares (initials, preview)
+    └── utils.ts                 # Utilidades y helpers
 ```
 
 ---
@@ -123,26 +167,84 @@ royal-padel/
 ## 🎯 Funcionalidades Implementadas
 
 ### ✅ **Completado**
-- [x] Hero section con imagen de fondo profesional
-- [x] Navegación responsive con menú móvil
-- [x] Sección de estadísticas con avatares
-- [x] Tipografía impactante estilo "Juega. Conecta. Domina."
-- [x] **Sistema de autenticación completo**
-  - [x] Formularios de Login, Registro y Recuperar contraseña
-  - [x] Validación robusta con Zod y React Hook Form
-  - [x] Rutas organizadas bajo `/auth/*`
-- [x] **Modo claro/oscuro** con next-themes
-- [x] Configuración de Google Fonts premium
-- [x] Componentes Shadcn/ui integrados
-- [x] Diseño mobile-first completamente responsive
+- [x] **Landing Page Premium**
+  - [x] Hero section con imagen de fondo profesional
+  - [x] Navegación responsive con menú móvil
+  - [x] Sección de estadísticas con avatares
+  - [x] Tipografía impactante estilo "Juega. Conecta. Domina."
+  - [x] Gradientes modernos y animaciones suaves
+
+- [x] **Sistema de Autenticación Completo**
+  - [x] Formularios con patrón `useActionState` y Server Actions
+  - [x] Login, Registro, Confirmación de cuenta
+  - [x] Recuperación y restablecimiento de contraseña
+  - [x] Componente OTP reutilizable y accesible
+  - [x] Validación robusta con Zod
+  - [x] Sistema de notificaciones toast con Sonner
+  - [x] Manejo de mensajes de error y éxito
+
+- [x] **Dashboard Post-Login**
+  - [x] Sección de bienvenida personalizada
+  - [x] Módulo de reserva rápida
+  - [x] Próximas reservaciones con datos reales
+  - [x] Estado de canchas disponibles en tiempo real
+  - [x] Navegación específica del dashboard
+  - [x] Diseño minimalista y semi-elegante
+
+- [x] **Sistema de Perfil de Usuario**
+  - [x] Visualización de información personal con estadísticas
+  - [x] Editor de perfil (nombre, email, teléfono)
+  - [x] **Sistema de Avatar Completo**
+    - [x] Upload de imágenes a Supabase Storage
+    - [x] Preview inmediato de imágenes seleccionadas
+    - [x] Validación de tipos y tamaños de archivo
+    - [x] Gestión de estados de carga y errores
+    - [x] Control pendiente con rollback automático
+    - [x] Generación automática de iniciales como fallback
+  - [x] Configuración de cuenta y cambio de contraseña
+  - [x] Interfaz tabbed para organización
+  - [x] Validaciones en tiempo real
+
+- [x] **Infraestructura Técnica**
+  - [x] Next.js 15 con Turbopack
+  - [x] TypeScript strict mode
+  - [x] Tailwind CSS v4 con tema personalizado
+  - [x] Componentes Shadcn/ui completamente integrados
+  - [x] Modo claro/oscuro con next-themes
+  - [x] Google Fonts premium (Poppins, Montserrat, Inter)
+  - [x] **Patrón useActionState** - Formularios sin React Hook Form
+  - [x] Arquitectura de Server Actions organizada
+  - [x] **Integración Supabase Storage** - Upload y gestión de archivos
+  - [x] Hooks personalizados reutilizables
+  - [x] Diseño mobile-first completamente responsive
 
 ### 🚧 **En Desarrollo**
-- [ ] Integración con API de autenticación (backend)
-- [ ] Sistema de reservas de canchas
-- [ ] Perfil de usuarios y dashboard
-- [ ] Búsqueda de compañeros de juego
-- [ ] Sistema de pagos
-- [ ] Notificaciones en tiempo real
+- [ ] **Integración Backend**
+  - [ ] API de autenticación real
+  - [ ] Base de datos de usuarios
+  - [ ] Sistema de sesiones seguro
+  - [ ] Endpoints para estadísticas de perfil
+
+- [ ] **Sistema de Reservas Avanzado**
+  - [ ] Calendario interactivo
+  - [ ] Gestión de disponibilidad en tiempo real
+  - [ ] Reservas recurrentes
+
+- [ ] **Funcionalidades Sociales**
+  - [ ] Búsqueda de compañeros de juego
+  - [ ] Sistema de mensajería
+  - [ ] Perfiles públicos de jugadores
+
+- [ ] **Sistema de Pagos**
+  - [ ] Integración con Stripe
+  - [ ] Gestión de membresías
+  - [ ] Historial de pagos
+
+- [ ] **Características Avanzadas**
+  - [ ] Notificaciones push
+  - [ ] Análiticas de juego
+  - [ ] Sistema de reseñas y calificaciones
+  - [ ] Búsqueda de usuarios y filtros avanzados
 
 ---
 
@@ -174,12 +276,12 @@ royal-padel/
 
 ## 🚀 Próximos Pasos
 
-1. **Integración con API Backend** - Conectar formularios con endpoints de Node.js
+1. **Conectar Datos Reales** - Integrar estadísticas y datos de backend
 2. **Sistema de Reservas** - Calendario interactivo y gestión de disponibilidad
-3. **Dashboard de Usuario** - Panel de control con reservas y perfil
-4. **Búsqueda Avanzada** - Filtros por ubicación, nivel y disponibilidad
-5. **Sistema de Pagos** - Integración con Stripe o similar
-6. **Notificaciones Push** - Confirmaciones y recordatorios
+3. **Búsqueda Avanzada** - Filtros por ubicación, nivel y disponibilidad
+4. **Sistema de Pagos** - Integración con Stripe o similar
+5. **Notificaciones Push** - Confirmaciones y recordatorios
+6. **Optimizaciones de Performance** - Lazy loading y caching
 
 ---
 
