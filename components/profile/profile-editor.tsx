@@ -90,7 +90,6 @@ export function ProfileEditor({ user }: ProfileEditorProps) {
 
     if (state.success) {
       toast.success(state.success);
-      router.push("/profile");
     }
   }, [state, router]);
 
@@ -163,6 +162,9 @@ export function ProfileEditor({ user }: ProfileEditorProps) {
 
   return (
     <form action={formAction} className="space-y-6">
+      {/* Hidden field to track original email */}
+      <input type="hidden" name="originalEmail" value={user.email} />
+      
       {/* Profile Picture Section */}
       <Card>
         <CardHeader>

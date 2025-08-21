@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useActionState } from "react";
+import { useState, useActionState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -8,15 +8,15 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { User } from "@/lib/validations/auth";
-import { 
-  changePasswordSchema, 
-  notificationSettingsSchema, 
+import {
+  changePasswordSchema,
+  notificationSettingsSchema,
   privacySettingsSchema,
   ChangePasswordForm,
   NotificationSettingsForm,
-  PrivacySettingsForm
+  PrivacySettingsForm,
 } from "@/lib/validations/auth";
-import { 
+import {
   Key,
   Bell,
   Shield,
@@ -31,12 +31,13 @@ import {
   Globe,
 } from "lucide-react";
 import { toast } from "sonner";
+import { changeCurrentPassword } from "@/actions/profile/change-current-password-action";
 
 interface AccountSettingsProps {
   user: User;
 }
 
-export function AccountSettings({ }: AccountSettingsProps) {
+export function AccountSettings({}: AccountSettingsProps) {
   /* 
   ====================================
   🔗 API CALLS NEEDED FOR THIS COMPONENT:
@@ -125,32 +126,52 @@ export function AccountSettings({ }: AccountSettingsProps) {
 
   // Mock server actions - TODO: Implement real server actions
   const changePasswordAction = async (_: FormState, __: FormData) => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    return { success: true, message: "Contraseña actualizada exitosamente", errors: {} };
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    return {
+      success: true,
+      message: "Contraseña actualizada exitosamente",
+      errors: {},
+    };
   };
 
-  const updateNotificationSettingsAction = async (_: FormState, __: FormData) => {
-    await new Promise(resolve => setTimeout(resolve, 800));
-    return { success: true, message: "Configuración de notificaciones actualizada", errors: {} };
+  const updateNotificationSettingsAction = async (
+    _: FormState,
+    __: FormData
+  ) => {
+    await new Promise((resolve) => setTimeout(resolve, 800));
+    return {
+      success: true,
+      message: "Configuración de notificaciones actualizada",
+      errors: {},
+    };
   };
 
   const updatePrivacySettingsAction = async (_: FormState, __: FormData) => {
-    await new Promise(resolve => setTimeout(resolve, 800));
-    return { success: true, message: "Configuración de privacidad actualizada", errors: {} };
+    await new Promise((resolve) => setTimeout(resolve, 800));
+    return {
+      success: true,
+      message: "Configuración de privacidad actualizada",
+      errors: {},
+    };
   };
 
   // Form states
-  const [passwordState, passwordAction, isPasswordPending] = useActionState(changePasswordAction, {
-    success: false, message: "", errors: {}
-  });
 
-  const [notificationState, notificationAction, isNotificationPending] = useActionState(updateNotificationSettingsAction, {
-    success: false, message: "", errors: {}
-  });
+  const [notificationState, notificationAction, isNotificationPending] =
+    useActionState(updateNotificationSettingsAction, {
+      success: false,
+      message: "",
+      errors: {},
+    });
 
-  const [privacyState, privacyAction, isPrivacyPending] = useActionState(updatePrivacySettingsAction, {
-    success: false, message: "", errors: {}
-  });
+  const [privacyState, privacyAction, isPrivacyPending] = useActionState(
+    updatePrivacySettingsAction,
+    {
+      success: false,
+      message: "",
+      errors: {},
+    }
+  );
 
   // Form data states
   const [passwordForm, setPasswordForm] = useState<ChangePasswordForm>({
@@ -159,13 +180,14 @@ export function AccountSettings({ }: AccountSettingsProps) {
     confirmPassword: "",
   });
 
-  const [notificationSettings, setNotificationSettings] = useState<NotificationSettingsForm>({
-    emailNotifications: true,
-    smsNotifications: false,
-    pushNotifications: true,
-    marketingEmails: false,
-    gameReminders: true,
-  });
+  const [notificationSettings, setNotificationSettings] =
+    useState<NotificationSettingsForm>({
+      emailNotifications: true,
+      smsNotifications: false,
+      pushNotifications: true,
+      marketingEmails: false,
+      gameReminders: true,
+    });
 
   const [privacySettings, setPrivacySettings] = useState<PrivacySettingsForm>({
     profileVisibility: "public",
@@ -175,35 +197,32 @@ export function AccountSettings({ }: AccountSettingsProps) {
   });
 
   // Handle password form submission
-  const handlePasswordSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    
-    const validation = changePasswordSchema.safeParse(passwordForm);
-    if (!validation.success) {
-      validation.error.errors.forEach(error => {
-        toast.error(`${error.path.join(".")}: ${error.message}`);
-      });
-      return;
+  const [changePasswordState, chancgePasswordDispatch, isPasswordPending] =
+    useActionState(changeCurrentPassword, {
+      errors: [],
+      success: "",
+    });
+
+  useEffect(() => {
+    if (changePasswordState.errors) {
+      changePasswordState.errors.forEach((error) => toast.error(error));
     }
 
-    const formData = new FormData(event.currentTarget);
-    passwordAction(formData);
-    
-    // Clear form on success
-    setPasswordForm({
-      currentPassword: "",
-      newPassword: "",
-      confirmPassword: "",
-    });
-  };
+    if (changePasswordState.success) {
+      toast.success(changePasswordState.success);
+    }
+  }, [changePasswordState]);
 
   // Handle notification settings update
-  const handleNotificationSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleNotificationSubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
     event.preventDefault();
-    
-    const validation = notificationSettingsSchema.safeParse(notificationSettings);
+
+    const validation =
+      notificationSettingsSchema.safeParse(notificationSettings);
     if (!validation.success) {
-      validation.error.errors.forEach(error => {
+      validation.error.errors.forEach((error) => {
         toast.error(`${error.path.join(".")}: ${error.message}`);
       });
       return;
@@ -214,12 +233,14 @@ export function AccountSettings({ }: AccountSettingsProps) {
   };
 
   // Handle privacy settings update
-  const handlePrivacySubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handlePrivacySubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
     event.preventDefault();
-    
+
     const validation = privacySettingsSchema.safeParse(privacySettings);
     if (!validation.success) {
-      validation.error.errors.forEach(error => {
+      validation.error.errors.forEach((error) => {
         toast.error(`${error.path.join(".")}: ${error.message}`);
       });
       return;
@@ -240,7 +261,7 @@ export function AccountSettings({ }: AccountSettingsProps) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handlePasswordSubmit} className="space-y-4">
+          <form action={chancgePasswordDispatch} className="space-y-4">
             {/* Current Password */}
             <div className="space-y-2">
               <Label htmlFor="currentPassword">Contraseña Actual</Label>
@@ -251,7 +272,12 @@ export function AccountSettings({ }: AccountSettingsProps) {
                   type={showCurrentPassword ? "text" : "password"}
                   placeholder="Ingresa tu contraseña actual"
                   value={passwordForm.currentPassword}
-                  onChange={(e) => setPasswordForm(prev => ({ ...prev, currentPassword: e.target.value }))}
+                  onChange={(e) =>
+                    setPasswordForm((prev) => ({
+                      ...prev,
+                      currentPassword: e.target.value,
+                    }))
+                  }
                   className="pr-10"
                   required
                 />
@@ -269,9 +295,6 @@ export function AccountSettings({ }: AccountSettingsProps) {
                   )}
                 </Button>
               </div>
-              {passwordState.errors?.currentPassword && (
-                <p className="text-sm text-red-500">{passwordState.errors.currentPassword}</p>
-              )}
             </div>
 
             {/* New Password */}
@@ -284,7 +307,12 @@ export function AccountSettings({ }: AccountSettingsProps) {
                   type={showNewPassword ? "text" : "password"}
                   placeholder="Ingresa tu nueva contraseña"
                   value={passwordForm.newPassword}
-                  onChange={(e) => setPasswordForm(prev => ({ ...prev, newPassword: e.target.value }))}
+                  onChange={(e) =>
+                    setPasswordForm((prev) => ({
+                      ...prev,
+                      newPassword: e.target.value,
+                    }))
+                  }
                   className="pr-10"
                   required
                 />
@@ -302,22 +330,26 @@ export function AccountSettings({ }: AccountSettingsProps) {
                   )}
                 </Button>
               </div>
-              {passwordState.errors?.newPassword && (
-                <p className="text-sm text-red-500">{passwordState.errors.newPassword}</p>
-              )}
             </div>
 
             {/* Confirm Password */}
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirmar Nueva Contraseña</Label>
+              <Label htmlFor="confirmPassword">
+                Confirmar Nueva Contraseña
+              </Label>
               <div className="relative">
                 <Input
                   id="confirmPassword"
-                  name="confirmPassword"
+                  name="confirmNewPassword"
                   type={showConfirmPassword ? "text" : "password"}
                   placeholder="Confirma tu nueva contraseña"
-                  value={passwordForm.confirmPassword}
-                  onChange={(e) => setPasswordForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                  value={passwordForm.confirmNewPassword}
+                  onChange={(e) =>
+                    setPasswordForm((prev) => ({
+                      ...prev,
+                      confirmPassword: e.target.value,
+                    }))
+                  }
                   className="pr-10"
                   required
                 />
@@ -335,12 +367,13 @@ export function AccountSettings({ }: AccountSettingsProps) {
                   )}
                 </Button>
               </div>
-              {passwordState.errors?.confirmPassword && (
-                <p className="text-sm text-red-500">{passwordState.errors.confirmPassword}</p>
-              )}
             </div>
 
-            <Button type="submit" disabled={isPasswordPending} className="w-full sm:w-auto">
+            <Button
+              type="submit"
+              disabled={isPasswordPending}
+              className="w-full sm:w-auto"
+            >
               {isPasswordPending ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -353,23 +386,6 @@ export function AccountSettings({ }: AccountSettingsProps) {
                 </>
               )}
             </Button>
-
-            {/* Success/Error Messages */}
-            {passwordState.success && (
-              <div className="p-3 bg-green-50 border border-green-200 rounded-md dark:bg-green-900/20 dark:border-green-800">
-                <p className="text-sm text-green-700 dark:text-green-400">
-                  {passwordState.message}
-                </p>
-              </div>
-            )}
-            
-            {!passwordState.success && passwordState.message && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-md dark:bg-red-900/20 dark:border-red-800">
-                <p className="text-sm text-red-700 dark:text-red-400">
-                  {passwordState.message}
-                </p>
-              </div>
-            )}
           </form>
         </CardContent>
       </Card>
@@ -390,7 +406,9 @@ export function AccountSettings({ }: AccountSettingsProps) {
                 <div className="flex items-center space-x-3">
                   <Mail className="h-5 w-5 text-muted-foreground" />
                   <div className="space-y-0.5">
-                    <Label htmlFor="emailNotifications">Notificaciones por Email</Label>
+                    <Label htmlFor="emailNotifications">
+                      Notificaciones por Email
+                    </Label>
                     <p className="text-sm text-muted-foreground">
                       Recibe updates importantes en tu correo electrónico
                     </p>
@@ -400,8 +418,11 @@ export function AccountSettings({ }: AccountSettingsProps) {
                   id="emailNotifications"
                   name="emailNotifications"
                   checked={notificationSettings.emailNotifications}
-                  onCheckedChange={(checked) => 
-                    setNotificationSettings(prev => ({ ...prev, emailNotifications: checked }))
+                  onCheckedChange={(checked) =>
+                    setNotificationSettings((prev) => ({
+                      ...prev,
+                      emailNotifications: checked,
+                    }))
                   }
                 />
               </div>
@@ -421,8 +442,11 @@ export function AccountSettings({ }: AccountSettingsProps) {
                   id="smsNotifications"
                   name="smsNotifications"
                   checked={notificationSettings.smsNotifications}
-                  onCheckedChange={(checked) => 
-                    setNotificationSettings(prev => ({ ...prev, smsNotifications: checked }))
+                  onCheckedChange={(checked) =>
+                    setNotificationSettings((prev) => ({
+                      ...prev,
+                      smsNotifications: checked,
+                    }))
                   }
                 />
               </div>
@@ -432,7 +456,9 @@ export function AccountSettings({ }: AccountSettingsProps) {
                 <div className="flex items-center space-x-3">
                   <Bell className="h-5 w-5 text-muted-foreground" />
                   <div className="space-y-0.5">
-                    <Label htmlFor="pushNotifications">Notificaciones Push</Label>
+                    <Label htmlFor="pushNotifications">
+                      Notificaciones Push
+                    </Label>
                     <p className="text-sm text-muted-foreground">
                       Recibe notificaciones instantáneas en tu dispositivo
                     </p>
@@ -442,8 +468,11 @@ export function AccountSettings({ }: AccountSettingsProps) {
                   id="pushNotifications"
                   name="pushNotifications"
                   checked={notificationSettings.pushNotifications}
-                  onCheckedChange={(checked) => 
-                    setNotificationSettings(prev => ({ ...prev, pushNotifications: checked }))
+                  onCheckedChange={(checked) =>
+                    setNotificationSettings((prev) => ({
+                      ...prev,
+                      pushNotifications: checked,
+                    }))
                   }
                 />
               </div>
@@ -465,8 +494,11 @@ export function AccountSettings({ }: AccountSettingsProps) {
                   id="marketingEmails"
                   name="marketingEmails"
                   checked={notificationSettings.marketingEmails}
-                  onCheckedChange={(checked) => 
-                    setNotificationSettings(prev => ({ ...prev, marketingEmails: checked }))
+                  onCheckedChange={(checked) =>
+                    setNotificationSettings((prev) => ({
+                      ...prev,
+                      marketingEmails: checked,
+                    }))
                   }
                 />
               </div>
@@ -476,7 +508,9 @@ export function AccountSettings({ }: AccountSettingsProps) {
                 <div className="flex items-center space-x-3">
                   <UserCheck className="h-5 w-5 text-muted-foreground" />
                   <div className="space-y-0.5">
-                    <Label htmlFor="gameReminders">Recordatorios de Partidos</Label>
+                    <Label htmlFor="gameReminders">
+                      Recordatorios de Partidos
+                    </Label>
                     <p className="text-sm text-muted-foreground">
                       Recordatorios antes de tus partidos programados
                     </p>
@@ -486,14 +520,21 @@ export function AccountSettings({ }: AccountSettingsProps) {
                   id="gameReminders"
                   name="gameReminders"
                   checked={notificationSettings.gameReminders}
-                  onCheckedChange={(checked) => 
-                    setNotificationSettings(prev => ({ ...prev, gameReminders: checked }))
+                  onCheckedChange={(checked) =>
+                    setNotificationSettings((prev) => ({
+                      ...prev,
+                      gameReminders: checked,
+                    }))
                   }
                 />
               </div>
             </div>
 
-            <Button type="submit" disabled={isNotificationPending} className="w-full sm:w-auto">
+            <Button
+              type="submit"
+              disabled={isNotificationPending}
+              className="w-full sm:w-auto"
+            >
               {isNotificationPending ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -515,7 +556,7 @@ export function AccountSettings({ }: AccountSettingsProps) {
                 </p>
               </div>
             )}
-            
+
             {!notificationState.success && notificationState.message && (
               <div className="p-3 bg-red-50 border border-red-200 rounded-md dark:bg-red-900/20 dark:border-red-800">
                 <p className="text-sm text-red-700 dark:text-red-400">
@@ -557,10 +598,15 @@ export function AccountSettings({ }: AccountSettingsProps) {
                       name="profileVisibility"
                       value="public"
                       checked={privacySettings.profileVisibility === "public"}
-                      onChange={(e) => setPrivacySettings(prev => ({ 
-                        ...prev, 
-                        profileVisibility: e.target.value as "public" | "friends" | "private" 
-                      }))}
+                      onChange={(e) =>
+                        setPrivacySettings((prev) => ({
+                          ...prev,
+                          profileVisibility: e.target.value as
+                            | "public"
+                            | "friends"
+                            | "private",
+                        }))
+                      }
                       className="h-4 w-4"
                     />
                     <Label htmlFor="public" className="text-sm font-normal">
@@ -574,10 +620,15 @@ export function AccountSettings({ }: AccountSettingsProps) {
                       name="profileVisibility"
                       value="friends"
                       checked={privacySettings.profileVisibility === "friends"}
-                      onChange={(e) => setPrivacySettings(prev => ({ 
-                        ...prev, 
-                        profileVisibility: e.target.value as "public" | "friends" | "private" 
-                      }))}
+                      onChange={(e) =>
+                        setPrivacySettings((prev) => ({
+                          ...prev,
+                          profileVisibility: e.target.value as
+                            | "public"
+                            | "friends"
+                            | "private",
+                        }))
+                      }
                       className="h-4 w-4"
                     />
                     <Label htmlFor="friends" className="text-sm font-normal">
@@ -591,10 +642,15 @@ export function AccountSettings({ }: AccountSettingsProps) {
                       name="profileVisibility"
                       value="private"
                       checked={privacySettings.profileVisibility === "private"}
-                      onChange={(e) => setPrivacySettings(prev => ({ 
-                        ...prev, 
-                        profileVisibility: e.target.value as "public" | "friends" | "private" 
-                      }))}
+                      onChange={(e) =>
+                        setPrivacySettings((prev) => ({
+                          ...prev,
+                          profileVisibility: e.target.value as
+                            | "public"
+                            | "friends"
+                            | "private",
+                        }))
+                      }
                       className="h-4 w-4"
                     />
                     <Label htmlFor="private" className="text-sm font-normal">
@@ -621,8 +677,11 @@ export function AccountSettings({ }: AccountSettingsProps) {
                   id="showEmail"
                   name="showEmail"
                   checked={privacySettings.showEmail}
-                  onCheckedChange={(checked) => 
-                    setPrivacySettings(prev => ({ ...prev, showEmail: checked }))
+                  onCheckedChange={(checked) =>
+                    setPrivacySettings((prev) => ({
+                      ...prev,
+                      showEmail: checked,
+                    }))
                   }
                 />
               </div>
@@ -642,8 +701,11 @@ export function AccountSettings({ }: AccountSettingsProps) {
                   id="showPhone"
                   name="showPhone"
                   checked={privacySettings.showPhone}
-                  onCheckedChange={(checked) => 
-                    setPrivacySettings(prev => ({ ...prev, showPhone: checked }))
+                  onCheckedChange={(checked) =>
+                    setPrivacySettings((prev) => ({
+                      ...prev,
+                      showPhone: checked,
+                    }))
                   }
                 />
               </div>
@@ -653,7 +715,9 @@ export function AccountSettings({ }: AccountSettingsProps) {
                 <div className="flex items-center space-x-3">
                   <UserCheck className="h-5 w-5 text-muted-foreground" />
                   <div className="space-y-0.5">
-                    <Label htmlFor="allowFriendRequests">Permitir Solicitudes de Amistad</Label>
+                    <Label htmlFor="allowFriendRequests">
+                      Permitir Solicitudes de Amistad
+                    </Label>
                     <p className="text-sm text-muted-foreground">
                       Otros usuarios pueden enviarte solicitudes de amistad
                     </p>
@@ -663,14 +727,21 @@ export function AccountSettings({ }: AccountSettingsProps) {
                   id="allowFriendRequests"
                   name="allowFriendRequests"
                   checked={privacySettings.allowFriendRequests}
-                  onCheckedChange={(checked) => 
-                    setPrivacySettings(prev => ({ ...prev, allowFriendRequests: checked }))
+                  onCheckedChange={(checked) =>
+                    setPrivacySettings((prev) => ({
+                      ...prev,
+                      allowFriendRequests: checked,
+                    }))
                   }
                 />
               </div>
             </div>
 
-            <Button type="submit" disabled={isPrivacyPending} className="w-full sm:w-auto">
+            <Button
+              type="submit"
+              disabled={isPrivacyPending}
+              className="w-full sm:w-auto"
+            >
               {isPrivacyPending ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -692,7 +763,7 @@ export function AccountSettings({ }: AccountSettingsProps) {
                 </p>
               </div>
             )}
-            
+
             {!privacyState.success && privacyState.message && (
               <div className="p-3 bg-red-50 border border-red-200 rounded-md dark:bg-red-900/20 dark:border-red-800">
                 <p className="text-sm text-red-700 dark:text-red-400">
@@ -718,10 +789,11 @@ export function AccountSettings({ }: AccountSettingsProps) {
               Eliminar Cuenta
             </h4>
             <p className="text-sm text-red-700 dark:text-red-300 mb-4">
-              Una vez que elimines tu cuenta, no hay vuelta atrás. Por favor, ten en cuenta que esto eliminará permanentemente todos tus datos.
+              Una vez que elimines tu cuenta, no hay vuelta atrás. Por favor,
+              ten en cuenta que esto eliminará permanentemente todos tus datos.
             </p>
-            <Button 
-              variant="destructive" 
+            <Button
+              variant="destructive"
               size="sm"
               onClick={() => {
                 // TODO: Implement delete account confirmation dialog
