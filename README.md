@@ -49,6 +49,7 @@
 - **[Date-fns](https://date-fns.org/)** - Manipulación y formateo de fechas
 - **[Radix UI](https://www.radix-ui.com/)** - Primitivos de componentes accesibles
 - **[Supabase](https://supabase.com/)** - Backend-as-a-Service para almacenamiento de archivos
+- **[Google Identity Services](https://developers.google.com/identity/gsi/web)** - Autenticación con Google (One Tap / Botón / Code Flow)
 
 ---
 
@@ -182,6 +183,7 @@ royal-padel/
   - [x] Validación robusta con Zod
   - [x] Sistema de notificaciones toast con Sonner
   - [x] Manejo de mensajes de error y éxito
+  - [x] Login con Google (Google Identity Services)
 
 - [x] **Dashboard Post-Login**
   - [x] Sección de bienvenida personalizada
@@ -218,13 +220,13 @@ royal-padel/
   - [x] Hooks personalizados reutilizables
   - [x] Diseño mobile-first completamente responsive
 
-### 🚧 **En Desarrollo**
-- [ ] **Integración Backend**
-  - [ ] API de autenticación real
-  - [ ] Base de datos de usuarios
-  - [ ] Sistema de sesiones seguro
-  - [ ] Endpoints para estadísticas de perfil
+- [x] **Integración Backend**
+  - [x] API de autenticación real (Express + JWT)
+  - [x] Base de datos de usuarios (Postgres + Sequelize)
+  - [x] Sistema de sesiones seguro (cookies HTTP-only, CORS)
+  - [x] Endpoints para estadísticas de perfil
 
+### 🚧 **En Desarrollo**
 - [ ] **Sistema de Reservas Avanzado**
   - [ ] Calendario interactivo
   - [ ] Gestión de disponibilidad en tiempo real

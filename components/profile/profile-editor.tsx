@@ -59,8 +59,6 @@ export function ProfileEditor({ user }: ProfileEditorProps) {
     errors: [],
   });
 
-  console.log("avatarUrl", avatarUrl);
-
   useEffect(() => {
     if (state.errors) {
       state.errors.forEach((error) => toast.error(error));
@@ -201,7 +199,7 @@ export function ProfileEditor({ user }: ProfileEditorProps) {
     setAvatarUrl(user.avatarUrl || "");
     setPendingFile(null);
     setHasPendingChanges(false);
-    
+
     // Limpiar el input de archivo
     if (fileInputRef.current) {
       fileInputRef.current.value = "";

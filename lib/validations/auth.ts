@@ -40,6 +40,7 @@ export const UserSchema = z.object({
   role: z.string(),
   phone: z.string(),
   status: z.string(),
+  googleSub: z.string(),
   emailVerified: z.boolean(),
   phoneVerified: z.boolean(),
   avatarUrl: z.string(),

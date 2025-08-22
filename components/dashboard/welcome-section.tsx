@@ -2,46 +2,10 @@
 
 import { Calendar, Trophy, Clock } from "lucide-react";
 import { User as AuthUser } from "@/lib/validations/auth";
+import { useEffect, useState } from "react";
 
 export function WelcomeSection({ user }: { user?: AuthUser }) {
-  /* 
-  ====================================
-  🔗 API CALLS NEEDED FOR THIS COMPONENT:
-  ====================================
-  
-  1. 🎯 GET USER PROFILE WITH STATS:
-     - Endpoint: GET /api/user/profile
-     - Headers: Authorization: Bearer {token}
-     - Response: {
-         user: {
-           id, fullName, email, role, 
-           emailVerified, phoneVerified
-         }
-       }
-  
-  2. 📊 GET USER STATS (if not included in profile):
-     - This might need a separate endpoint like GET /api/user/stats
-     - Or could be included in the profile response
-     - Expected data: {
-         totalGamesPlayed: number,
-         totalHoursPlayed: number, 
-         currentMonthGames: number,
-         favoriteCourtId: string,
-         favoriteCourtName: string
-       }
-  
-  3. 🏟️ GET FAVORITE COURT NAME (if not included above):
-     - Endpoint: GET /api/court/{favoriteCourtId}
-     - Response: { id, name, ... }
-  
-  💡 IMPLEMENTATION NOTES:
-  - Call these APIs when component mounts or when user logs in
-  - Store user data in context/state for reuse across dashboard
-  - Calculate totalHoursPlayed = totalGamesPlayed * 1.5 (if not provided by API)
-  - Handle loading states during API calls
-  - Show fallback values if stats not available yet
-  */
-
+  const [motivationMesg, setMotivationMesg] = useState("");
   // Determinar saludo basado en la hora
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -59,8 +23,14 @@ export function WelcomeSection({ user }: { user?: AuthUser }) {
       "¡A conquistar la cancha!",
       "Tu próxima victoria está cerca",
     ];
-    return messages[Math.floor(Math.random() * messages.length)];
+    const messageRandom = [Math.floor(Math.random() * messages.length)];
+    const result = messageRandom.toString();
+    setMotivationMesg(result);
   };
+
+  useEffect(() => {
+    getMotivationalMessage();
+  }, []);
 
   return (
     <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-lime-500 via-lime-600 to-lime-700 p-8 text-black">
@@ -79,7 +49,7 @@ export function WelcomeSection({ user }: { user?: AuthUser }) {
             {getGreeting()}, {user?.fullName.split(" ")[0]}! 👋
           </h1>
           <p className="text-lg md:text-xl opacity-90 font-medium">
-            {getMotivationalMessage()}
+            {motivationMesg}
           </p>
         </div>
 
